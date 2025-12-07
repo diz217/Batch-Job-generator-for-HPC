@@ -215,7 +215,8 @@ def job_gen(config,spec,job_specs):
         cnt = mst
         for key, val in entry.items():
             cnt = cnt.replace(key,str(val))
-        with open(entry['jobname'],'w') as f:
+        jobname = entry['jobname'] if entry['jobname'].endswith('.js') else entry['jobname']+'.js'
+        with open(jobname,'w') as f:
             f.write(cnt)
         if 'vsub' in spec:
             for key in spec['vsub']:
@@ -259,6 +260,7 @@ number_key_preprocess(config,spec)
 job_specs = read_spec(config,spec)
 ## write-in
 job_gen(config,spec,job_specs)
+
 
 
 
