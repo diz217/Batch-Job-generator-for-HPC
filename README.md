@@ -26,7 +26,6 @@ In short:
 No workflow assumptions. No fixed naming rules. Flexible for generic job generation in any HPC system. 
 
 ## Key features
-
 - **Format: `key=values` per line.**
   - Invalid lines, empty lines, and comment lines (`#...`) will be skipped.
 - **Quotes and whitespace around keys/values are automatically stripped.**
@@ -63,9 +62,9 @@ const1 = example_test
 111333 = col_file
 cmd = {jobname} uds: sysconfig -zsth -r99 -d{indat1,indat2}
 ```
-
 ### Output example
 ![sample output](Examples/sample_output_dir_screenshot.png)
+
 ## Project structure 
 ```
 ├── src/
@@ -76,3 +75,22 @@ cmd = {jobname} uds: sysconfig -zsth -r99 -d{indat1,indat2}
 ├── README.md
 ├── lICENSE
 ```
+
+## Development
+This project currently contains a single core script:
+```
+src/job_generator_v1.py
+```
+- Python 3.7+  
+- No external dependencies (only standard library)
+- All logic — config parsing, classification, placeholder resolution,
+  job expansion, and submission file generation — is unified in one script.
+### Roadmap
+Planned enhancements include:
+- YAML / JSON config support
+- Dry-run mode and detailed logging
+- Auto-submission support for SLURM / PBS / LSF
+- Compatibility checks for mismatched placeholder usage
+- Plugin interface for custom job systems
+
+Contributions are welcome.
