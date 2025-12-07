@@ -64,3 +64,12 @@ const1 = example_test
 cmd = {jobname} uds: sysconfig -zsth -r99 -d{indat1,indat2}
 ```
 ## Project structure 
+```
+├── src/
+|   ├── Job_generator_v1.py
+├── Examples/
+    ├── config.conf
+    ├── sample_output_dir_screenshot.png
+├── README.md
+├── lICENSE
+```
