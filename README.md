@@ -63,6 +63,9 @@ const1 = example_test
 111333 = col_file
 cmd = {jobname} uds: sysconfig -zsth -r99 -d{indat1,indat2}
 ```
+
+### Output example
+![sample output](Examples/sample_output_dir_screenshot.png)
 ## Project structure 
 ```
 ├── src/
