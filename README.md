@@ -62,7 +62,7 @@ const1 = example_test
 111333 = col_file
 cmd = {jobname} uds: sysconfig -zsth -r99 -d{indat1,indat2}
 ```
-### Run
+### Command-line usage
 To run the script as command-line tool:
 
 1. Ensure the first line (shebang) of the script points to a valid Python3 (>=3.6) interpreter, e.g.:
