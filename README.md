@@ -62,6 +62,27 @@ const1 = example_test
 111333 = col_file
 cmd = {jobname} uds: sysconfig -zsth -r99 -d{indat1,indat2}
 ```
+### Run
+To run the script as command-line tool:
+
+1. Ensure the first line (shebang) of the script points to a valid Python3 (>=3.6) interpreter, e.g.:
+```
+#!/opt/local/bin/python3.9
+```
+2. Make the script executable:
+```
+chmod +x job_generator_v1.py
+```
+3. Add its location to the `$PATH` variable, e.g.:
+```
+setenv PATH "${PATH}:${HOME}/src"
+rehash
+```
+4. Run the script from the directory containing the config file:
+```
+job_generator_v1.py config.conf
+```
+
 ### Output example
 ![sample output](Examples/sample_output_dir_screenshot.png)
 
