@@ -49,20 +49,7 @@ No workflow assumptions. No fixed naming rules. Flexible for generic job generat
   - If the system find 0 or more than 1 such keys, user will be prompted to enter or select the keyname and/or the value in patterns/paths. Proper checks will be done to the input.
 - **Job generation:**
   - Job paths will be extracted from jobname input and applied to the submission command file.
-    
-## Config example
-```
-id = list_id
-cnt = template.js
-outdat = /10_test/user_A/{id}_{111333}_test
-jobname = ./test1/{id}_{111333}_test
-indat2 = {indat1}_{const1}_{111333}
-indat1 = list_id::2
-const1 = example_test
-111333 = col_file
-cmd = {jobname} uds: sysconfig -zsth -r99 -d{indat1,indat2}
-```
-### Command-line usage
+## Command-line usage
 To run the script as command-line tool:
 
 1. Ensure the first line (shebang) of the script points to a valid Python3 (>=3.6) interpreter, e.g.:
@@ -81,8 +68,19 @@ rehash
 4. Run the script from the directory containing the config file:
 ```
 job_generator_v1.py config.conf
+```    
+## Config example
 ```
-
+id = list_id
+cnt = template.js
+outdat = /10_test/user_A/{id}_{111333}_test
+jobname = ./test1/{id}_{111333}_test
+indat2 = {indat1}_{const1}_{111333}
+indat1 = list_id::2
+const1 = example_test
+111333 = col_file
+cmd = {jobname} uds: sysconfig -zsth -r99 -d{indat1,indat2}
+```
 ### Output example
 ![sample output](Examples/sample_output_dir_screenshot.png)
 
