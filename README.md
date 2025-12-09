@@ -67,7 +67,7 @@ chmod +x job_generator_v1.py
 setenv PATH "${PATH}:${HOME}/src"
 rehash
 ```
-4. Remove any Windows CRLF line endings (^M) from the script (if needed), e.g:
+4. Remove any Windows CRLF line endings (^M) from the script if needed, e.g:
 ```
 sed 's/\r$//' job_generator_v1.py
 ```
