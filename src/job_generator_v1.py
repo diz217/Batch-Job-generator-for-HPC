@@ -27,9 +27,9 @@ def parse_config(path):
         config[key.strip('`')] = val
     return config,mask
  
-def classify_spec(config,mask):
-    #check_jobname(config)    
+def classify_spec(config,mask):    
     spec = defaultdict(list)
+    check_jobname(config,mask,spec)
     for key,val in config.items():
         if '::' in val:
             typ = 'matrix' 
@@ -38,7 +38,7 @@ def classify_spec(config,mask):
             if 'uds' in val and '-r' in val and '-z' in val:
                 typ = 'vsub'
                 pattern = re.compile(r'\{([^{}]+)\}')
-                config[key] = pattern.sub(repl,config['vsub'])
+                config[key] = pattern.sub(repl,config[key])
                 mask[key] = False
         elif '.js' in val or '.mjs' in val:
             typ = 'mst'
@@ -51,7 +51,8 @@ def classify_spec(config,mask):
             typ = 'constant'
         spec[typ].append(key)
     if 'constant' in spec:
-        if 'jobname' in spec['constant']:
+        jobkey = spec['jobname'][0]
+        if jobkey in spec['constant']:
             print("Warning: jobname is registered as a constant, not list")
         else:
             print(f'Attention: there are constants in the config: {spec["constant"]}')
@@ -65,32 +66,24 @@ def classify_spec(config,mask):
     #reorder_patterned(config,spec)
     return spec
  
-def check_jobname(config,mask):
+def check_jobname(config,mask,spec):
     for key,val in config.items():
         if '{' in val and '}' in val and 'uds' in val and '-r' in val and '-z' in val:
             m = re.search(r'\{([^{}]+)\}\s*uds',val)
             if m:
                 jobkey = m.group(1).strip()
-                if jobkey !='jobname':
-                    config['jobname'] = config.pop(jobkey)
-                    mask.pop(jobkey); mask['jobname'] = False
-                    for key,val in config.items(): config[key] = val.replace('{'+jobkey+'}','{jobname}')
+                spec['jobname'] = jobkey
                 return 
     pattern = re.compile(r'job(s)?[_-]*(name|key)?(s)?(\d{1})?',re.IGNORECASE)
     found = [k for k in config if pattern.fullmatch(k)]
     if len(found)==1:
         jobkey = found[0]
-        if jobkey !='jobname':
-            config['jobname'] = config.pop(jobkey)
-            mask.pop(jobkey); mask['jobname'] = False
-            for key,val in config.items(): config[key] = val.replace('{'+jobkey+'}','{jobname}')
+        spec['jobname'] = jobkey
         return
     if len(found)>1:
         jobkey = input('Which key is the jobname?').strip().strip('"').strip("'").strip('`')
         if jobkey in config:
-            config['jobname'] = config.pop(jobkey)
-            mask.pop(jobkey); mask['jobname'] = False
-            for key,val in config.items(): config[key] = val.replace('{'+jobkey+'}','{jobname}')
+            spec['jobname'] = jobkey
             return
         if re.fullmatch(r'(no|none|na|n\\a|n/a|not applicable)?[,.!;]?',jobkey,re.I):
             bool_job = 0
@@ -106,12 +99,11 @@ def check_jobname(config,mask):
         jobname_val = input('Please enter the path/pattern for jobname:').strip().strip('"').strip("'")
         config['jobname'] = jobname_val
         mask['jobname'] = False
+        spec['jobname'] = 'jobname'
         return 
     jobkey = input('Which key is the jobname?').strip().strip('"').strip("'")
     if jobkey in config:
-        config['jobname'] = config.pop(jobkey)
-        mask.pop(jobkey); mask['jobname'] = False
-        for key,val in config.items(): config[key] = val.replace('{'+jobkey+'}','{jobname}')
+        spec['jobname'] = jobkey
         return
     raise Exception("Key entry not in config")
  
@@ -220,14 +212,15 @@ def job_gen(config,spec,mask,job_specs):
     with open(mst_path,'r') as f:
         mst = f.read()
     vsub = ''
+    jobkey = spec['jobname'][0]
     for entry in job_specs:
-        jobpath = Path(entry['jobname']).parent
+        jobpath = Path(entry[jobkey]).parent
         jobpath.mkdir(parents=True,exist_ok=True)
         cnt = mst
         for key, val in entry.items():
             if mask[key]:
                 cnt = cnt.replace(key,str(val))
-        jobname = entry['jobname'] if entry['jobname'].endswith('.js') else entry['jobname']+'.js'
+        jobname = entry[jobkey] if entry[jobkey].endswith('.js') else entry[jobkey]+'.js'
         with open(jobname,'w') as f:
             f.write(cnt)
         if 'vsub' in spec:
@@ -260,9 +253,7 @@ else:
         raise Exception(f"Path '{cpath}' does not exist")
 ## read in config
 config,mask = parse_config(cpath)
-## locate the jobname folder
-check_jobname(config,mask)
-## classify the input keys/placeholders
+## locate the jobname folder, classify the input keys/placeholders
 spec = classify_spec(config,mask)
 ## reorder the patterned texts according to in-degrees
 reorder_patterned(config, spec)
@@ -272,6 +263,7 @@ number_key_preprocess(config,spec)
 job_specs = read_spec(config,spec)
 ## write-in
 job_gen(config,spec,mask,job_specs)
+
 
 
 
