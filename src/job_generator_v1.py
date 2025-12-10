@@ -53,7 +53,7 @@ def classify_spec(config,mask):
     if 'constant' in spec:
         jobkey = spec['jobname'][0]
         if jobkey in spec['constant']:
-            print("Warning: jobname is registered as a constant, not list")
+            print("Warning: Jobname is registered as a constant, not list")
         else:
             print(f'Attention: there are constants in the config: {spec["constant"]}')
     if 'mst' not in spec:
@@ -173,7 +173,9 @@ def read_spec(config,spec):
         if len(list_specs[key]) !=len_specs:
             raise Exception(f"Data length not uniform across different inputs, check '{key}'")
     for key in spec['constant']:
-        if not len_specs: len_specs = 1
+        if not len_specs: 
+            len_specs = 1
+            print(f'Warning: Jobname is expanded as a constant, please check {spec["constant"]}')
         list_specs[key] = [config[key]]*len_specs
     job_specs = []
     for row in range(len_specs):
@@ -264,6 +266,7 @@ number_key_preprocess(config,spec)
 job_specs = read_spec(config,spec)
 ## write-in
 job_gen(config,spec,mask,job_specs)
+
 
 
 
